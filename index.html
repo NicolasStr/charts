@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helm Charts Repository</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        header {
+            background: #007acc;
+            color: #fff;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        pre {
+            background: #eee;
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        footer {
+            text-align: center;
+            padding: 1rem 0;
+            background: #333;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to My Helm Charts Repository</h1>
+    </header>
+    <main>
+        <p>This is the home page for my Helm Charts repository. This contains the different Helm Charts I maintain. You can use the following commands to add this repository to your Helm configuration:</p>
+        <pre>
+helm repo add nicolasstr_charts https://nicolas.streng.sh/charts/
+helm repo update
+        </pre>
+        <p>Once added, you can search for available charts using:</p>
+        <pre>
+helm search repo nicolasstr_charts
+        </pre>
+        <p>Feel free to explore and use the charts available in this repository!</p>
+    </main>
+    <footer>
+        <p>https://github.com/NicolasStr/charts/</p>
+    </footer>
+</body>
+</html>
