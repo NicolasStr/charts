@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  twenty:
+  - apiVersion: v2
+    appVersion: 0.50.0
+    created: "2025-04-01T07:37:29.355895467Z"
+    description: A Helm chart for Kubernetes
+    digest: 96a8c2a0d9eacf1efe918dbdbd8e853edc1007f3bae3911a70f3edcc023df75e
+    name: twenty
+    type: application
+    urls:
+    - https://github.com/NicolasStr/charts/releases/download/twenty-0.0.1/twenty-0.0.1.tgz
+    version: 0.0.1
+generated: "2025-04-01T07:37:29.355901569Z"
