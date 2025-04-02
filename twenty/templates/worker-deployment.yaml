@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "twenty.fullname" . }}
+  name: {{ include "twenty.fullname" . }}-worker
   labels:
     {{- include "twenty.labels" . | nindent 4 }}
     app.kubernetes.io/component: worker
@@ -41,6 +41,8 @@ spec:
           {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            {{- include "twenty.renderEnvValues" . | nindent 12 -}}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}

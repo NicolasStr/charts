@@ -60,3 +60,19 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+    Render 'env' fields.
+*/}}
+{{- define "twenty.renderEnvValues" -}}
+{{- range $k, $v := .Values.twenty.env }}
+{{- if (kindIs "string" $v) }}
+{{- printf "- name:%s" $k }}
+{{- printf "value:%s" $v | nindent 2}}
+{{- end }}
+{{- if (kindIs "map" $v) }}
+{{- printf "- name:%s" $k }}
+{{- toYaml $v | nindent 2 }}
+{{- end }}
+{{- end }}
+{{- end -}}
