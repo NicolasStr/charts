@@ -65,14 +65,13 @@ Create the name of the service account to use
     Render 'env' fields.
 */}}
 {{- define "twenty.renderEnvValues" -}}
-{{- range $k, $v := .Values.twenty.env }}
+{{- range $k, $v := .Values.twenty.env -}}
 {{- if (kindIs "string" $v) }}
-{{- printf "- name:%s" $k }}
-{{- printf "value:%s" $v | nindent 2}}
-{{- end }}
-{{- if (kindIs "map" $v) }}
-{{- printf "- name:%s" $k }}
+- name: {{ $k | quote }}
+  value: {{ $v | quote }}
+{{- else if (kindIs "map" $v) }}
+- name: {{ $k | quote }}
 {{- toYaml $v | nindent 2 }}
 {{- end }}
-{{- end }}
+{{- end -}}
 {{- end -}}
