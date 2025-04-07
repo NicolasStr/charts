@@ -80,6 +80,7 @@ Create the name of the service account to use
     Render 'env' and 'envFrom' blocks.
 */}}
 {{- define "twenty.envBlock" -}}
+{{- $isWorker := .isWorker -}}
 {{- if or .Values.twenty.envFromConfigMapName .Values.twenty.envFromSecretName }}
 envFrom:
   {{- if .Values.twenty.envFromConfigMapName }}
@@ -92,24 +93,26 @@ envFrom:
   {{- end }}
 {{- end }}
 env:
+  {{- if .Values.ingress.enabled }}
+  - name: SERVER_URL
+    value: {{ .Values.ingress.host | quote }}
+  {{- end }}
+  {{- if eq $isWorker "true" }}
+  - name: DISABLE_DB_MIGRATIONS
+    value: "true"
+  {{- end }}
   - name: NODE_PORT
     value: {{ .Values.twenty.port | quote }}
   {{- if .Values.postgresql.enabled }}
-  - name: PG_DATABASE_URL
-    value: "postgres://postgres:${PG_DATABASE_PASSWORD}@${PG_DATABASE_HOST}:${PG_DATABASE_PORT}/postgres"
   - name: PG_DATABASE_HOST
     value: {{ .Release.Name }}-postgresql
-  - name: PG_DATABASE_PORT
-    {{- if and .Values.postgresql.service .Values.postgresql.service.ports .Values.postgresql.service.ports.postgresql }}
-    value: {{ include "postgresql.v1.primary.fullname" . }}
-    {{- else }}
-    value: "5432"
-    {{- end }}
   - name: PG_DATABASE_PASSWORD
     valueFrom: 
       secretKeyRef:
         name: {{ .Release.Name }}-postgresql
-        key: postgresql-password
+        key: postgres-password
+  - name: PG_DATABASE_URL
+    value: "postgres://postgres:$(PG_DATABASE_PASSWORD)@$(PG_DATABASE_HOST):5432/postgres"
   {{- end }}
   {{- if .Values.redis.enabled }}
   - name: REDIS_URL

@@ -41,9 +41,9 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default ( printf 'v%s' .Chart.AppVersion ) }}"
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag | default ( printf "v%s" .Chart.AppVersion ) }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- include "twenty.envBlock" . | indent 10 }}
+          {{- include "twenty.envBlock" ( set . "isWorker" "false" ) | indent 10 }}
           ports:
             - name: http
               containerPort: {{ .Values.twenty.port }}
@@ -60,14 +60,13 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.volumeMounts }}
           volumeMounts:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-      {{- with .Values.volumes }}
+            - name: docker-data
+              mountPath: /app/docker-data
       volumes:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        - name: docker-data
+          persistentVolumeClaim:
+            claimName: {{ include "twenty.fullname" . }}-docker-data
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
