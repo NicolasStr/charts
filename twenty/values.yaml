@@ -105,3 +105,8 @@ postgresql:
 redis:
   enabled: true
   architecture: standalone
+
+minio:
+  enabled: true
+  disableWebUI: true
+  defaultBuckets: "twenty"

@@ -75,3 +75,65 @@ Create the name of the service account to use
 {{- end }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+    Render 'env' and 'envFrom' blocks.
+*/}}
+{{- define "twenty.envBlock" -}}
+{{- if or .Values.twenty.envFromConfigMapName .Values.twenty.envFromSecretName }}
+envFrom:
+  {{- if .Values.twenty.envFromConfigMapName }}
+  - configMapRef:
+      name: {{ .Values.twenty.envFromConfigMapName }}
+  {{- end }}
+  {{- if .Values.twenty.envFromSecretName }}
+  - secretRef:
+      name: {{ .Values.twenty.envFromSecretName }}
+  {{- end }}
+{{- end }}
+env:
+  - name: NODE_PORT
+    value: {{ .Values.twenty.port | quote }}
+  {{- if .Values.postgresql.enabled }}
+  - name: PG_DATABASE_URL
+    value: "postgres://postgres:${PG_DATABASE_PASSWORD}@${PG_DATABASE_HOST}:${PG_DATABASE_PORT}/postgres"
+  - name: PG_DATABASE_HOST
+    value: {{ .Release.Name }}-postgresql
+  - name: PG_DATABASE_PORT
+    {{- if and .Values.postgresql.service .Values.postgresql.service.ports .Values.postgresql.service.ports.postgresql }}
+    value: {{ include "postgresql.v1.primary.fullname" . }}
+    {{- else }}
+    value: "5432"
+    {{- end }}
+  - name: PG_DATABASE_PASSWORD
+    valueFrom: 
+      secretKeyRef:
+        name: {{ .Release.Name }}-postgresql
+        key: postgresql-password
+  {{- end }}
+  {{- if .Values.redis.enabled }}
+  - name: REDIS_URL
+    value: "redis://{{ .Release.Name }}-redis-master:6379"
+  {{- end }}
+  {{- if .Values.minio.enabled }}
+  - name: STORAGE_TYPE
+    value: "s3"
+  - name: STORAGE_S3_REGION
+    value: "us-east-1"
+  - name: STORAGE_S3_NAME
+    value: "twenty"
+  - name: STORAGE_S3_ENDPOINT
+    value: "{{ .Release.Name }}-minio:9000"
+  - name: STORAGE_S3_ACCESS_KEY_ID
+    valueFrom: 
+      secretKeyRef:
+        name: {{ .Release.Name }}-minio
+        key: root-user
+  - name: STORAGE_S3_SECRET_ACCESS_KEY
+    valueFrom: 
+      secretKeyRef:
+        name: {{ .Release.Name }}-minio
+        key: root-password
+  {{- end }}
+{{- include "twenty.renderEnvValues" . | nindent 2 }}
+{{- end -}}
