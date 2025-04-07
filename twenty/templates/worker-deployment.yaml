@@ -41,7 +41,41 @@ spec:
           {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if or .Values.twenty.envFromConfigMapName .Values.twenty.envFromSecretName -}}
+          envFrom:
+            {{- if .Values.twenty.envFromConfigMapName }}
+            - configMapRef:
+                name: {{ .Values.twenty.envFromConfigMapName }}
+            {{- end }}
+            {{- if .Values.twenty.envFromSecretName }}
+            - secretRef:
+                name: {{ .Values.twenty.envFromSecretName }}
+            {{- end }}
+          {{- end -}}
           env:
+            - name: NODE_PORT
+              value: {{ .Values.twenty.port | quote }}
+            {{- if .Values.postgresql.enabled }}
+            - name: PG_DATABASE_URL
+              value: "postgres://postgres:${PG_DATABASE_PASSWORD}@${PG_DATABASE_HOST}:${PG_DATABASE_PORT}/postgres"
+            - name: PG_DATABASE_HOST
+              value: {{ .Release.Name }}-postgresql
+            - name: PG_DATABASE_PORT
+              {{- if and .Values.postgresql.service .Values.postgresql.service.ports .Values.postgresql.service.ports.postgresql }}
+              value: {{ include "postgresql.v1.primary.fullname" . }}
+              {{- else }}
+              value: "5432"
+              {{- end }}
+            - name: PG_DATABASE_PASSWORD
+              valueFrom: 
+                secretKeyRef:
+                  name: {{ .Release.Name }}-postgresql
+                  key: postgresql-password
+            {{- end }}
+            {{- if .Values.redis.enabled }}
+            - name: REDIS_URL
+              value: "redis://{{ .Release.Name }}-redis-master:6379"
+            {{- end }}
           {{- include "twenty.renderEnvValues" . | nindent 12 }}
           ports:
             - name: http

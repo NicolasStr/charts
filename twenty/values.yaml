@@ -11,7 +11,7 @@ fullnameOverride: ""
 
 twenty:
   # Port to use for listening HTTP requests by the container
-  nodePort: 3000
+  port: 3000
   # If Ingress is disabled, configure this URL as the server URL
   # serverUrl: "toto.fr"
   # Inline env to add to Pods.
@@ -98,3 +98,10 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+postgresql:
+  enabled: true
+
+redis:
+  enabled: true
+  architecture: standalone
