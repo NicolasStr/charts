@@ -16,11 +16,11 @@ twenty:
   # serverUrl: "toto.fr"
   # Inline env to add to Pods.
   # Value can be of type string, with directly the value of the key, or an object (in that case, the key is used as "-name: $key")
-  env:
-    APP_SECRET2: "test2"
-    APP_SECRET:
-      valueFrom:
-        configMap: "test"
+  env: {}
+  #  APP_SECRET2: "test2"
+  #  APP_SECRET:
+  #    valueFrom:
+  #      configMap: "test"
   # APP_SECRET: "this-is-not-secret"
   envFromConfigMapName: ""
   envFromSecretName: ""
