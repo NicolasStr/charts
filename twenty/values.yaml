@@ -16,7 +16,8 @@ twenty:
   # serverUrl: "toto.fr"
   # Inline env to add to Pods.
   # Value can be of type string, with directly the value of the key, or an object (in that case, the key is used as "-name: $key")
-  env: {}
+  env:
+    TELEMETRY_ENABLED: "false"
   #  APP_SECRET2: "test2"
   #  APP_SECRET:
   #    valueFrom:
@@ -55,7 +56,7 @@ ingress:
   annotations: {}
   host: chart-example.local
   path: /
-  pathType: ImplementationSpecific
+  pathType: Prefix
   tlsSecretName: "chart-example-tls"
 
 resources: {}
@@ -65,22 +66,6 @@ resources: {}
   # requests:
   #   cpu: 100m
   #   memory: 128Mi
-
-livenessProbe:
-  httpGet:
-    path: /
-    port: http
-readinessProbe:
-  httpGet:
-    path: /
-    port: http
-
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
 
 nodeSelector: {}
 

@@ -20,10 +20,11 @@ spec:
       secretName: {{ .Values.ingress.tlsSecretName }}
   {{- end }}
   rules:
-    - host: {{ .Values.ingress.hosts | quote }}
+    - host: {{ .Values.ingress.host | quote }}
       http:
         paths:
           - path: /
+            pathType: {{ .Values.ingress.pathType }}
             backend:
               service:
                 name: {{ include "twenty.fullname" . }}

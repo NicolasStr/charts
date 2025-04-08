@@ -95,7 +95,7 @@ envFrom:
 env:
   {{- if .Values.ingress.enabled }}
   - name: SERVER_URL
-    value: {{ .Values.ingress.host | quote }}
+    value: http{{ if .Values.ingress.tlsSecretName }}s{{ end }}://{{ .Values.ingress.host }}{{ trimSuffix "/" .Values.ingress.path }}
   {{- end }}
   {{- if eq $isWorker "true" }}
   - name: DISABLE_DB_MIGRATIONS
@@ -115,8 +115,15 @@ env:
     value: "postgres://postgres:$(PG_DATABASE_PASSWORD)@$(PG_DATABASE_HOST):5432/postgres"
   {{- end }}
   {{- if .Values.redis.enabled }}
+  - name: REDIS_PASSWORD
+    valueFrom: 
+      secretKeyRef:
+        name: {{ .Release.Name }}-redis
+        key: redis-password
+  - name: REDIS_HOST
+    value: {{ .Release.Name }}-redis-master
   - name: REDIS_URL
-    value: "redis://{{ .Release.Name }}-redis-master:6379"
+    value: "redis://default:$(REDIS_PASSWORD)@$(REDIS_HOST):6379"
   {{- end }}
   {{- if .Values.minio.enabled }}
   - name: STORAGE_TYPE
@@ -126,7 +133,7 @@ env:
   - name: STORAGE_S3_NAME
     value: "twenty"
   - name: STORAGE_S3_ENDPOINT
-    value: "{{ .Release.Name }}-minio:9000"
+    value: "http://{{ .Release.Name }}-minio:9000"
   - name: STORAGE_S3_ACCESS_KEY_ID
     valueFrom: 
       secretKeyRef:
